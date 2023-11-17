@@ -75,6 +75,10 @@ updateMarkerPosition(
   10000000
 );
 
+// Update marker position on window resize
+updateAllMarkers();
+window.addEventListener('resize', updateAllMarkers);
+
 // Format function for most sliders, adding commas for thousands
 function formatWithCommas(value) {
   return Math.round(value).toLocaleString();
@@ -261,4 +265,13 @@ function updateMarkerPosition(
   const sliderWidth = sliderElement.offsetWidth;
 
   markerElement.style.left = `${relativePosition * sliderWidth}px`;
+}
+
+// fucntion to update all markers on window resize by calling updateMarkerPosition again
+function updateAllMarkers() {
+  updateMarkerPosition("sliderPinnedFile", "markerPinnedFile", 100000, 20000, 220000);
+  updateMarkerPosition("sliderStorage", "markerStorage", 2500, 500, 10000);
+  updateMarkerPosition("sliderGateways", "markerGateways", 3, 1, 11);
+  updateMarkerPosition("sliderBandwidth", "markerBandwidth", 2500, 500, 7500);
+  updateMarkerPosition("sliderRequests", "markerRequests", 5000000, 1000000, 10000000);
 }
