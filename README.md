@@ -3,7 +3,7 @@
 ## Description
 This project is specific for a calculator built on Webflow. 
 Its values and logic are based on Pinata's usage-based pricing model launched in September 2023.
-I am using noUiSlider library to initialize 5 different sliders, each with different values, and Javascript to craft the backend logic. This is how final result looked like:
+noUiSlider library was used to initialize 5 different sliders, each with different values, and Javascript to craft the backend logic. This is what the final result looked like:
 
 <img width="661" alt="Final screenshot of the pricing calculator" src="https://github.com/diebrudie/wf-pin-price-calc/assets/63471787/156ec1ae-ad13-44e4-b784-aaf0742cf18e">
 
