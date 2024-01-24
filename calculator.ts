@@ -110,6 +110,7 @@ function updatePricing() {
   const priceGateways = calculatePriceGateways(numGatewaysValue);
   const priceBandwidth = calculatePriceBandwidth(numBandwidthValue);
   const priceRequests = calculatePriceRequests(requestsValue);
+  const workspacePrice = calculateWorkspacePrice(currentMembers);
 
   // Now you can set the text content with formatted strings for display
   document.getElementById(
@@ -146,7 +147,8 @@ function updatePricing() {
     priceStorage +
     priceGateways +
     priceBandwidth +
-    priceRequests;
+    priceRequests+
+    workspacePrice;
 
   document.getElementById(
     "priceTotal"
@@ -205,8 +207,8 @@ document
     event.preventDefault();
     currentPlan = currentPlan === "Picnic" ? "Fiesta" : "Picnic";
 
-    updatePlanDisplay(currentPlan);
-
+    updatePlanDisplay(currentPlan);    
+  
     // Recalculate pricing
     updatePricing();
   });
@@ -239,6 +241,13 @@ function updatePlanDisplay(plan) {
   document.getElementById("pricePerExtraRequests").textContent =
     plan === "Picnic" ? "0.20" : "0.15";
 
+    // Adjust workspace seats according to the plan
+  if (plan === "Picnic") {
+    currentMembers = maxMembersPicnic;
+  } else if (plan === "Fiesta") {
+    currentMembers = maxMembersFiesta;
+  }
+  updateWorkspacePricing();
   updatePricing();
 }
 
@@ -287,3 +296,74 @@ function updateAllMarkers() {
     10000000
   );
 }
+
+// Workspaces Logic
+let currentMembers = 3;
+const maxMembersPicnic = 3;
+const maxMembersFiesta = 5;
+const costPerExtraMember = 10;
+let isUpgradeRequired = false;
+
+const seatsWorkspace = document.getElementById('seatsWorkspace');
+const priceWorkspace = document.getElementById('priceWorkspace');
+const minFiestaWorkspace = document.getElementById('minFiestaWorkspace');
+const workspaceBtnPlus = document.getElementById('workspaceBtnPlus');
+const workspaceBtnMinus = document.getElementById('workspaceBtnMinus');
+
+// Initialize the workspace seats count
+seatsWorkspace.textContent = currentMembers.toString();
+
+function calculateWorkspacePrice(members) {
+  const extraMembers = members - maxMembersFiesta;
+  return extraMembers > 0 ? extraMembers * costPerExtraMember : 0;
+}
+
+function updateWorkspacePricing() {
+  if (currentPlan === "Picnic" && currentMembers > maxMembersPicnic) {
+    switchPlan("Fiesta");
+    clickTogglePlan();    
+  }
+    
+  const extraMembers = currentMembers - maxMembersFiesta;
+  const extraCost = extraMembers > 0 ? extraMembers * costPerExtraMember : 0;
+  priceWorkspace.textContent = `$${extraCost}`;
+  seatsWorkspace.textContent = currentMembers.toString();
+  
+  if (currentMembers <= maxMembersPicnic) {
+    minFiestaWorkspace.textContent = "Up to 3 users incl. in Picnic Plan";    
+  } else if (currentMembers > maxMembersFiesta){
+    minFiestaWorkspace.textContent = "$10 per extra seat";    
+  } else {
+    minFiestaWorkspace.textContent = "Up to 5 users incl. in Fiesta Plan";    
+  }
+}
+
+function clickTogglePlan(){    
+  document.getElementById("planToggle").click();  
+  
+  currentPlan = currentPlan === "Picnic" ? "Fiesta" : "Picnic";
+  
+  updatePlanDisplay(currentPlan);
+  console.log(currentPlan);
+}
+
+function switchPlan(plan) {
+  currentPlan = plan;    
+  updatePricing(); 
+}
+
+workspaceBtnPlus.addEventListener('click', function() {
+  currentMembers++;
+  updateWorkspacePricing();
+  updatePricing();
+  console.log("plus member");
+});
+
+workspaceBtnMinus.addEventListener('click', function() {
+  if (currentMembers > maxMembersPicnic) {
+    currentMembers--;
+    updateWorkspacePricing();
+    updatePricing();
+    console.log("minus member");
+  }
+});
